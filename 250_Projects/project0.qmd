@@ -28,7 +28,7 @@ execute:
 ### Introduction
 
 <!-- highlight line 31 to the end and use ctrl + / (win) or command + / (mac) to uncomment out the code below, the same shortcut can be used to comment out code again. -->
-<!-- 
+
 ```{python}
 #| label: libraries
 #| include: false
@@ -65,7 +65,7 @@ _TODO and REMOVE: remove any cells not relavent to this question_
 # Include and execute your code here
 # Include import statements here 
 # Include reading data statements here
-
+x=df.query('name == "Anastasia"')
 ```
 
 ```{python}
@@ -199,4 +199,4 @@ mydat = df.head(1000)\
 display(mydat)
 
 ``` 
-_REMOVE ME: the output of any code cell will appear below the cell, including tables and charts_ -->
+_REMOVE ME: the output of any code cell will appear below the cell, including tables and charts_

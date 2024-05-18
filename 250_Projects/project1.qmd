@@ -25,6 +25,8 @@ execute:
     
 ---
 
+### Introduction
+
 ```{python}
 #| label: libraries
 #| include: false
@@ -34,17 +36,18 @@ import plotly.express as px
 ```
 
 
-## Elevator pitch
+### Elevator pitch
 
 _Through this project I had the opportunity to become more familiar with working with graphs when searching for specific information. It was very interesting for me to study the history of the use of various names, since it gives us an understanding of how many people with a specific name were born in certain years and how old they might be now. In the example with question 2 about the name Brittany, I was interested in how much our association with name and age coincides with reality._
 
 ```{python}
-#| label: project data
+#| label: project-data
 #| code-summary: Read and format project data
 df = pd.read_csv("https://github.com/byuidatascience/data4names/raw/master/data-raw/names_year/names_year.csv")
 ```
 
-## Core question 1
+
+### Core question 1
 
 __How does your name at your birth year compare to its use historically?__
 
@@ -54,11 +57,10 @@ _Until the 1980s, the popularity of this name was 0-200 children per year, which
 #| label: Q1
 #| code-summary: Code for finding data for name Anastasia
 data_1 = df.query('name == "Anastasia"')
-
 ```
 
 ```{python}
-#| label: Q1 chart
+#| label: Q1-chart
 #| code-summary: Code for creating chart
 #| fig-cap: "History of use of the name Anastasia"
 #| fig-align: center
@@ -93,7 +95,7 @@ data_2 = df.query('name == "Brittany"')
 ```
 
 ```{python}
-#| label: Q2 chart
+#| label: Q2-chart
 #| code-summary: Code for creating chart
 #| fig-cap: "History of use of the name Brittany"
 #| fig-align: center
@@ -123,7 +125,7 @@ data_3 = df.query('(name == "Mary" | name == "Martha" | name == "Peter" | name =
 ```
 
 ```{python}
-#| label: Q3 chart
+#| label: Q3-chart
 #| code-summary: Code for creating chart
 #| fig-cap: "History of use of the names Mary, Martha, Peter and Paul"
 #| fig-align: center
@@ -154,7 +156,7 @@ data_4 = df.query('name == "Dominic"')
 ```
 
 ```{python}
-#| label: Q4 chart
+#| label: Q4-chart
 #| code-summary: Code for creating chart
 #| fig-cap: "History of use of the name Dominic"
 #| fig-align: center
@@ -189,7 +191,7 @@ data_5 = df.query('name == "Elliot" & year >=1950')
 ```
 
 ```{python}
-#| label: Q5 chart
+#| label: Q5-chart
 #| code-summary: Code for creating chart
 #| fig-cap: "History of use of the name Eliot from the 1950 year with tree releases"
 #| fig-align: center
