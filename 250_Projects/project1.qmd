@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
+title: "Client Report - Project 1: What's in a Name?"
 subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+author: "Anastasia Yazvinskaya"
 format:
   html:
     self-contained: true
@@ -25,4 +25,208 @@ execute:
     
 ---
 
-### Paste in a template
+```{python}
+#| label: libraries
+#| include: false
+import pandas as pd
+import numpy as np
+import plotly.express as px
+```
+
+
+## Elevator pitch
+
+_Through this project I had the opportunity to become more familiar with working with graphs when searching for specific information. It was very interesting for me to study the history of the use of various names, since it gives us an understanding of how many people with a specific name were born in certain years and how old they might be now. In the example with question 2 about the name Brittany, I was interested in how much our association with name and age coincides with reality._
+
+```{python}
+#| label: project data
+#| code-summary: Read and format project data
+df = pd.read_csv("https://github.com/byuidatascience/data4names/raw/master/data-raw/names_year/names_year.csv")
+```
+
+## Core question 1
+
+__How does your name at your birth year compare to its use historically?__
+
+_Until the 1980s, the popularity of this name was 0-200 children per year, which is quite small, considering that most of the time this figure was below 100. Since the 1980s, active use of this name began. In less than 10 years, its popularity has quadrupled. By the year of my birth (1998), almost 1.5 times. At the moment, this indicator continues to grow._
+
+```{python}
+#| label: Q1
+#| code-summary: Code for finding data for name Anastasia
+data_1 = df.query('name == "Anastasia"')
+
+```
+
+```{python}
+#| label: Q1 chart
+#| code-summary: Code for creating chart
+#| fig-cap: "History of use of the name Anastasia"
+#| fig-align: center
+chart_1 = px.area(data_1,
+  x="year",
+  y="Total"
+)
+chart_1.add_vline(
+    x=1998, 
+    line_width=2, 
+    line_dash="dash", 
+    line_color="green"
+)
+chart_1.update_layout(
+    xaxis_title = "Year",
+    yaxis_title = "People born with the name Anastasia"
+)
+chart_1.show()
+```
+
+## Core question 2
+
+__If you talked to someone named Brittany on the phone, what is your guess of their age? What ages would you not guess?__
+
+_For me, the name Brittany is associated with a young woman aged 20-25. I would not have thought that she could be more than 45, if the voice itself does not testify otherwise. According to the data, most people with this name are 33-34 years old today._
+
+```{python}
+#| label: Q2
+#| code-summary: Code which finds all data for Brittany name
+data_2 = df.query('name == "Brittany"')
+
+```
+
+```{python}
+#| label: Q2 chart
+#| code-summary: Code for creating chart
+#| fig-cap: "History of use of the name Brittany"
+#| fig-align: center
+
+chart_2 =px.line(data_2,
+  x="year",
+  y="Total"
+)
+chart_2.update_layout(
+    xaxis_title = "Year",
+    yaxis_title = "People born with the name Brittany"
+)
+chart_2.show()
+```
+
+## Core question 3
+
+__Mary, Martha, Peter, and Paul are all Christian names. From 1920 - 2000, compare the name usage of each of the four names.__
+
+_Prior to 1970, the most popular name was Mary. It was given to their children 2-4 times more often than the name Paul, which is in second place. An interesting point is that from 1970 to 2000 the use of the names Mary and Paul is almost the same. Martha and Peter are quite rare names for those years from 19021 to 2000. However, it is interesting to note that initially the name Martha was preferable, but after 1950 the situation changed, so that the name Peter became more popular. By 2000, the general usage of all four names was nearly the same._
+
+```{python}
+#| label: Q3
+#| code-summary: Code which finds all data for Mary, Martha, Peter and Paul names between 1920-2000 years
+data_3 = df.query('(name == "Mary" | name == "Martha" | name == "Peter" | name == "Paul") & year >=1920 & year <=2000')
+
+```
+
+```{python}
+#| label: Q3 chart
+#| code-summary: Code for creating chart
+#| fig-cap: "History of use of the names Mary, Martha, Peter and Paul"
+#| fig-align: center
+
+chart_3 =px.line(data_3,
+  x="year",
+  y="Total",
+  color='name'
+)
+chart_3.update_layout(
+    xaxis_title = "Year",
+    yaxis_title = "People born with the names Mary, Martha, Peter and Paul"
+)
+chart_3.show()
+```
+
+## Core question 4
+
+__Think of a unique name from a famous movie. Plot the usage of that name and see how changes line up with the movie release. Does it look like the movie had an effect on usage?__
+
+_According to the data, before the release of the first film, the name was already growing in popularity. After the first film we can see an increase in Polish use of this name. However, after each of the next three releases there was a sharp decline in the use of this name. Although by the fifth film the total number surpasses the usage before the first. After the fifth film, there is again an increase in the use of the name Dominic and after the 6th it declines. Data after 2015 are not available._
+
+```{python}
+#| label: Q4
+#| code-summary: Code which finds all data for Dominic name
+data_4 = df.query('name == "Dominic"')
+
+```
+
+```{python}
+#| label: Q4 chart
+#| code-summary: Code for creating chart
+#| fig-cap: "History of use of the name Dominic"
+#| fig-align: center
+
+chart_4 =px.line(data_4,
+  x="year",
+  y="Total"
+)
+released = [2001, 2003, 2006, 2009, 2011, 2013, 2015]
+for line in released:
+    chart_4.add_shape(type="line",
+                  x0=line, y0=0,  # start of the line
+                  x1=line, y1=6500,  # end of the line
+                  line=dict(color="red", width=2, dash='dash'))
+chart_4.update_layout(
+    xaxis_title = "Year",
+    yaxis_title = "People born with the name Dominic"
+)
+chart_4.show()
+```
+
+## Stretch question 1
+
+__Reproduce the chart Elliot using the data from the names_year.csv file.__
+
+_According to the data, we can see the history of the usage of Elliot name and E.T Releases: first in the middle of 1982 year, second in the 1985 year and third in 2002 year._
+
+```{python}
+#| label: Q5
+#| code-summary: Code which finds all data for Elliot name after 1950 year
+data_5 = df.query('name == "Elliot" & year >=1950')
+```
+
+```{python}
+#| label: Q5 chart
+#| code-summary: Code for creating chart
+#| fig-cap: "History of use of the name Eliot from the 1950 year with tree releases"
+#| fig-align: center
+
+chart_5 =px.line(data_5,
+  x="year",
+  y="Total",
+  color='name'
+)
+chart_5.add_vline(
+    x=1982.5, 
+    line_width=2, 
+    line_dash="dash", 
+    line_color="red", 
+    annotation_text='E.T Released',
+    annotation_position="left top"
+)
+chart_5.add_vline(
+    x=1985, 
+    line_width=2, 
+    line_dash="dash", 
+    line_color="red", 
+    annotation_text='Second Release'
+)
+chart_5.add_vline(
+    x=2002, 
+    line_width=2, 
+    line_dash="dash", 
+    line_color="red", 
+    annotation_text='Third Release'
+)
+chart_5.update_layout(
+    xaxis = dict(range=[1950, 2025]),
+    xaxis_title = "year",
+    yaxis = dict(range=[-50, 1300]),
+    yaxis_title = "Total",
+    title = "Elliot... What?"
+)
+chart_5.show()
+```
