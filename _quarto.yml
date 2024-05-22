@@ -7,7 +7,7 @@ website:
   favicon: Images/favicon.png
   back-to-top-navigation: true
   site-url: https://your.published.portfolio.url
-  repo-url: https://github.com/yaz19001/yaz19001_sp24
+  repo-url: https://github.com/AnastasiaYazvinskaya/yaz19001_sp24
   issue-url: https://github.com/yaz19001/yaz19001_sp24/issues/new
   repo-actions: [issue] #if you want to allow others to report issues on your site uncomment this line
 

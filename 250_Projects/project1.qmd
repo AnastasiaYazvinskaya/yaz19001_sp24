@@ -47,7 +47,7 @@ df = pd.read_csv("https://github.com/byuidatascience/data4names/raw/master/data-
 ```
 
 
-### Core question 1
+### Q1: Comparing Name Popularity Over Time
 
 __How does your name at your birth year compare to its use historically?__
 
@@ -81,11 +81,11 @@ chart_1.update_layout(
 chart_1.show()
 ```
 
-## Core question 2
+## Q2: Age Estimation Based on Name
 
 __If you talked to someone named Brittany on the phone, what is your guess of their age? What ages would you not guess?__
 
-_For me, the name Brittany is associated with a young woman aged 20-25. I would not have thought that she could be more than 45, if the voice itself does not testify otherwise. According to the data, most people with this name are 33-34 years old today._
+_For me, the name Brittany is associated with a young woman of about 20. I definitely would not have guessed that she could be 45 or older if the voice itself did not indicate otherwise. However, according to available data, most people with this name are 33-34 years old today._
 
 ```{python}
 #| label: Q2
@@ -111,7 +111,7 @@ chart_2.update_layout(
 chart_2.show()
 ```
 
-## Core question 3
+## Q3: Comparative Analysis of Christian Names from 1920 to 2000
 
 __Mary, Martha, Peter, and Paul are all Christian names. From 1920 - 2000, compare the name usage of each of the four names.__
 
@@ -142,11 +142,11 @@ chart_3.update_layout(
 chart_3.show()
 ```
 
-## Core question 4
+## Q4: Impact of a Famous Movie on Name Usage
 
 __Think of a unique name from a famous movie. Plot the usage of that name and see how changes line up with the movie release. Does it look like the movie had an effect on usage?__
 
-_According to the data, before the release of the first film, the name was already growing in popularity. After the first film we can see an increase in Polish use of this name. However, after each of the next three releases there was a sharp decline in the use of this name. Although by the fifth film the total number surpasses the usage before the first. After the fifth film, there is again an increase in the use of the name Dominic and after the 6th it declines. Data after 2015 are not available._
+_I analyzed data on the name Dominic from the movie "Fast and the Furious". According to the data, before the release of the first film in 2001 year, the name was already growing in popularity. After the first film, we see an increase in the use of this name. However, after each of the next three releases in 2003, 2006 and 2009 years there was a sharp decline in the use of this name. Although by the fifth film in 2011 year the total number exceeds the usage before the first. After the fifth film, there is again an increase in the use of the name Dominic and after the 6th in 2013 year it declines. Data after 2015 are not available._
 
 ```{python}
 #| label: Q4
@@ -166,11 +166,22 @@ chart_4 =px.line(data_4,
   y="Total"
 )
 released = [2001, 2003, 2006, 2009, 2011, 2013, 2015]
+colors = ['red', 'green', 'black', 'pink', 'gray', 'purple', 'orange']
+colorID = 0
 for line in released:
     chart_4.add_shape(type="line",
                   x0=line, y0=0,  # start of the line
                   x1=line, y1=6500,  # end of the line
-                  line=dict(color="red", width=2, dash='dash'))
+                  line=dict(color=colors[colorID], width=2, dash='dash'))
+    chart_4.add_annotation(
+        x=line-1, y=1200,
+        text=str(line),
+        yshift=10,  # Adjust vertical position of the annotation
+        font=dict(color=colors[colorID]),  # Set font color to match the line
+        showarrow=False,
+        textangle=270,
+    )
+    colorID += 1
 chart_4.update_layout(
     xaxis_title = "Year",
     yaxis_title = "People born with the name Dominic"
@@ -178,7 +189,7 @@ chart_4.update_layout(
 chart_4.show()
 ```
 
-## Stretch question 1
+## Q5: Reproduction of "Elliot" Name Chart
 
 __Reproduce the chart Elliot using the data from the names_year.csv file.__
 
