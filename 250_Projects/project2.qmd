@@ -62,10 +62,14 @@ wrongData = df.query('(airport_name == "" or airport_name == "n/a") or (month ==
 
 wrongData.replace('', np.nan, inplace=True)
 wrongData.replace('n/a', np.nan, inplace=True)
+# Columns to include in the resut table
+columns_to_include = ['airport_name', 'month']
+# Filter DataFrame to include only desired columns
+wrongData = wrongData[columns_to_include]
 ```
 
 ```{python}
-#| label: Q1-table
+#| label: Q1table
 #| code-summary: Example of NaN values
 #| tbl-cap: "Example of NaN values in Airport name and Month"
 #| tbl-cap-location: top
@@ -98,7 +102,7 @@ data2 = data2.assign(proportion_of_delayed_flights = lambda x: x.total_num_of_de
 ```
 
 ```{python}
-#| label: Q2-table
+#| label: Q2table
 #| code-summary: Sort data to find the worst airport
 #| tbl-cap: "Rating of airports"
 #| tbl-cap-location: top
@@ -142,11 +146,14 @@ data3 = data3.sort_values(['month'], key = lambda x : x.apply (lambda x : month_
 #| code-summary: Create chart which show rate of delayed flights for each month
 #| fig-cap: "Rate of delayed flights for each month"
 #| fig-align: center
+# best (min) and worst (max) months index
 min_index = min(range(len(data3['proportion_of_delayed_flights'])), key=lambda i: data3['proportion_of_delayed_flights'][i])
+max_index = max(range(len(data3['proportion_of_delayed_flights'])), key=lambda i: data3['proportion_of_delayed_flights'][i])
 # Define colors list with default color for all bars
 colors = ['#636efa'] * len(data3['proportion_of_delayed_flights'])
 # Recolor the bar with minimum value
 colors[min_index] = 'green'
+colors[max_index] = 'red'
 chart3 = px.bar(data3,
     x="month", 
     y="proportion_of_delayed_flights"
@@ -156,9 +163,6 @@ chart3.update_layout(
     xaxis_title = "Month",
     yaxis_title = "Rate of delayed flights in %"
 )
-base_color = chart3.data[0].marker.color[0]
-
-print("Base color for bars:", base_color)
 # Rotate text under the bar like the Yaxis title
 chart3.update_xaxes(tickangle=270)
 chart3.show()
@@ -182,12 +186,17 @@ _While studying the data necessary for the calculations, it was discovered that 
 mean_late_aircraft = clearData.num_of_delays_late_aircraft.mean()
 clearData.replace(-999, mean_late_aircraft, inplace=True)
 # calculate delays by weather
-data4 = clearData.assign(delays_by_weather_months = lambda x: 0.4*x.num_of_delays_nas if str(x.month) in ['April', 'May', 'June', 'July', 'August'] else 0.65*x.num_of_delays_nas)
-data4 = data4.assign(delays_by_weather = lambda x: x.num_of_delays_weather + 0.3*x.num_of_delays_late_aircraft + x.delays_by_weather_months)
+predata = clearData.assign(delays_by_weather_months = lambda x: 0.4*x.num_of_delays_nas if str(x.month) in ['April', 'May', 'June', 'July', 'August'] else 0.65*x.num_of_delays_nas)
+predata = predata.assign(delays_by_weather = lambda x: x.num_of_delays_weather + 0.3*x.num_of_delays_late_aircraft + x.delays_by_weather_months)
+
+# Columns to include in the resut table
+columns_to_include = ['airport_code', 'airport_name', 'month', 'num_of_flights_total', 'num_of_delays_total', 'num_of_delays_weather', 'num_of_delays_late_aircraft', 'num_of_delays_nas', 'delays_by_weather']
+# Filter DataFrame to include only desired columns
+data4 = predata[columns_to_include]
 ```
 
 ```{python}
-#| label: Q4-table
+#| label: Q4table
 #| code-summary: Table with total number of delays by weather
 #| tbl-cap: "Top 5 rows with total number of delays by weather"
 #| tbl-cap-location: top
@@ -206,7 +215,7 @@ _According to statistics and taking into account all data errors on the histogra
 ```{python}
 #| label: Q5
 #| code-summary: Prepare data for proportion of delays by weather for each airport
-data5 = data4.groupby("airport_code").agg(
+data5 = predata.groupby("airport_code").agg(
     total_num_of_delays = ('num_of_delays_total', 'sum'),
     num_of_delays_weather = ('num_of_delays_weather', 'sum'),
     numu_of_delays_late_aircraft = ('num_of_delays_late_aircraft', 'sum'),
@@ -220,7 +229,7 @@ data5 = data5.assign(proportion_of_delayed_flights_by_weather = lambda x: round(
 ```{python}
 #| label: Q5-chart
 #| code-summary: Chart for showing the rate of delayed flights by weather for each airport
-#| fig-cap: "Rate of delayed flights by weather fro each airport"
+#| fig-cap: "Rate of delayed flights by weather for each airport"
 #| fig-align: center
 chart5 = px.bar(data5.head(200),
     x="airport_code", 
@@ -239,27 +248,28 @@ chart5.show()
 __Which delay is the worst delay?__
  Create a similar analysis as above for Weahter Delay with: Carrier Delay and Security Delay. Compare the proportion of delay for each of the three categories in a Chart and a Table. Describe your results.
 
-_Answer_
-
-```{python}
-#| label: Q6-prepare
-#| code-summary: Clear data before grouping
-# Clear num_of_delays_carrier
-data4['Numeric_Column'] = pd.to_numeric(data4['num_of_delays_carrier'], errors='coerce')
-mean_value = data4['Numeric_Column'].mean()
-data4['num_of_delays_carrier'] = data4['Numeric_Column'].fillna(mean_value)
-# Clear num_of_delays_security
-data4['Numeric_Column'] = pd.to_numeric(data4['num_of_delays_security'], errors='coerce')
-mean_value = data4['Numeric_Column'].mean()
-data4['num_of_delays_security'] = data4['Numeric_Column'].fillna(mean_value)
-data4.drop(columns=['Numeric_Column'], inplace=True)
-```
+_When examining the data needed for the calculations, it was discovered that the required columns had incorrect data, which I corrected to the average of that column. According to statistics and taking into account all the data errors on the histogram, we see the following: the largest number of delays is associated with weather - 39%, the smallest number of delays is associated with security - almost 0%._
 
 ```{python}
 #| label: Q6
-#| code-summary: Prepare data for chart
-#| # Clear num_of_delays_carrier
-data6 = data4.groupby("airport_code").agg(
+#| code-summary: Clear data before grouping
+# Clear num_of_delays_carrier
+predata['Numeric_Column'] = pd.to_numeric(predata['num_of_delays_carrier'], errors='coerce')
+mean_value = predata['Numeric_Column'].mean()
+predata['num_of_delays_carrier'] = predata['Numeric_Column'].fillna(mean_value)
+# Clear num_of_delays_security
+predata['Numeric_Column'] = pd.to_numeric(predata['num_of_delays_security'], errors='coerce')
+mean_value = predata['Numeric_Column'].mean()
+predata['num_of_delays_security'] = predata['Numeric_Column'].fillna(mean_value)
+```
+
+```{python}
+#| label: Q6table
+#| code-summary: Prepare data for table and chart
+#| tbl-cap: "Rate of delayed flights by weather, carrier and security"
+#| tbl-cap-location: top
+predata['Numeric_Column'] = 1
+data6 = predata.groupby("Numeric_Column").agg(
     total_num_of_delays = ('num_of_delays_total', 'sum'),
     num_of_delays_weather = ('num_of_delays_weather', 'sum'),
     numu_of_delays_late_aircraft = ('num_of_delays_late_aircraft', 'sum'),
@@ -272,17 +282,30 @@ data6 = data4.groupby("airport_code").agg(
 data6 = data6.assign(rate_of_delayed_flights_by_weather = lambda x: round(x.total_num_of_delays_by_weather/x.total_num_of_delays, 2)*100)
 data6 = data6.assign(rate_of_delayed_flights_by_carrier = lambda x: round(x.num_of_delays_carrier/x.total_num_of_delays, 2)*100)
 data6 = data6.assign(rate_of_delayed_flights_by_security = lambda x: round(x.num_of_delays_security/x.total_num_of_delays, 2)*100)
+# Columns to include in the resut table
+columns_to_include = ['rate_of_delayed_flights_by_weather', 'rate_of_delayed_flights_by_carrier', 'rate_of_delayed_flights_by_security']
+# Filter DataFrame to include only desired columns
+data6 = data6[columns_to_include]
 data6
 ```
 
 ```{python}
 #| label: Q6-chart
 #| code-summary: Code for creating chart
-#| fig-cap: "History of use of the name Eliot from the 1950 year with tree releases"
+#| fig-cap: "Rate of delayed flights by weather, carrier and security"
 #| fig-align: center
-df_last_three = data6[['airport_code'] + list(data6.columns[-3:])]
-df_long = df_last_three.melt(id_vars='airport_code', var_name='Proportion', value_name='Value')
-fig = px.bar(df_long, x='airport_code', y='Value', color='Proportion', barmode='group',
-labels={''})
-fig
+# Extract column names and values
+import plotly.graph_objects as go
+column_names = data6.columns
+values = data6.values.flatten()
+chart6 = go.Figure(data=[go.Bar(x=column_names, y=values, marker_color=['blue', 'orange', 'green'])])
+
+chart6.update_layout(
+    xaxis_title = "Type of delays",
+    yaxis_title = "Rate of delayed flights in %"
+)
+chart6
 ```
+
+
+
